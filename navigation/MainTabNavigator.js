@@ -3,24 +3,25 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import Explorer from '../screens/Explorer';
+import Account from '../screens/Account';
+import More from '../screens/More';
+import Shop from '../screens/Shop';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
   default: {},
 });
 
-const HomeStack = createStackNavigator(
+const ExplorerStack = createStackNavigator(
   {
-    Home: HomeScreen,
+    Explorer
   },
   config
 );
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+ExplorerStack.navigationOptions = {
+  tabBarLabel: 'Explorer',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -33,44 +34,61 @@ HomeStack.navigationOptions = {
   ),
 };
 
-HomeStack.path = '';
+ExplorerStack.path = '';
 
-const LinksStack = createStackNavigator(
+const ShopStack = createStackNavigator(
   {
-    Links: LinksScreen,
+    Shop
   },
   config
 );
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+ShopStack.navigationOptions = {
+  tabBarLabel: 'Shop',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
   ),
 };
 
-LinksStack.path = '';
+ShopStack.path = '';
 
-const SettingsStack = createStackNavigator(
+const AccountStack = createStackNavigator(
   {
-    Settings: SettingsScreen,
+    Account,
   },
   config
 );
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+AccountStack.navigationOptions = {
+  tabBarLabel: 'Account',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
+    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'} />
   ),
 };
 
-SettingsStack.path = '';
+AccountStack.path = '';
+
+const MoreStack = createStackNavigator(
+  {
+    More,
+  },
+  config
+);
+
+MoreStack.navigationOptions = {
+  tabBarLabel: 'More',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'} />
+  ),
+};
+
+MoreStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  ExplorerStack,
+  ShopStack,
+  AccountStack,
+  MoreStack
 });
 
 tabNavigator.path = '';
