@@ -1,11 +1,11 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 export default function More() {
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Text>More</Text>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -16,7 +16,8 @@ More.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

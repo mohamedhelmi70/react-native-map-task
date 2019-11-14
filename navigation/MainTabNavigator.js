@@ -3,38 +3,35 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import Explorer from '../screens/Explorer';
+import Explore from '../screens/Explorer';
 import Account from '../screens/Account';
 import More from '../screens/More';
 import Shop from '../screens/Shop';
+
+import * as Constants from '../constants/index';
+
+const Colors = Constants.Theme.Colors;
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
   default: {},
 });
 
-const ExplorerStack = createStackNavigator(
+const ExploreStack = createStackNavigator(
   {
-    Explorer
+    Explore
   },
   config
 );
 
-ExplorerStack.navigationOptions = {
-  tabBarLabel: 'Explorer',
+ExploreStack.navigationOptions = {
+  tabBarLabel: 'Explor',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
-    />
+    <TabBarIcon focused={focused} name="explore"/>
   ),
 };
 
-ExplorerStack.path = '';
+ExploreStack.path = '';
 
 const ShopStack = createStackNavigator(
   {
@@ -46,7 +43,7 @@ const ShopStack = createStackNavigator(
 ShopStack.navigationOptions = {
   tabBarLabel: 'Shop',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
+    <TabBarIcon focused={focused} name="store" />
   ),
 };
 
@@ -62,7 +59,7 @@ const AccountStack = createStackNavigator(
 AccountStack.navigationOptions = {
   tabBarLabel: 'Account',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'} />
+    <TabBarIcon focused={focused} name="person" />
   ),
 };
 
@@ -78,17 +75,32 @@ const MoreStack = createStackNavigator(
 MoreStack.navigationOptions = {
   tabBarLabel: 'More',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'} />
+    <TabBarIcon focused={focused} name="more-horiz" />
   ),
 };
 
 MoreStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
-  ExplorerStack,
+  ExploreStack,
   ShopStack,
   AccountStack,
   MoreStack
+},{
+    tabBarOptions: {
+    activeTintColor: Colors.tintColor,
+    inactiveTintColor: Colors.tabIconDefault, 
+    labelStyle: {
+      fontSize: 13,
+      marginTop: -2,
+    },
+    style: {
+      height: 55,
+      backgroundColor: Colors.white,
+      borderTopColor: Colors.tintColor,
+      padding: 4,
+    },
+  }
 });
 
 tabNavigator.path = '';

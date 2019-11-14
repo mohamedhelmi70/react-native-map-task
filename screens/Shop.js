@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 
-export default function Shop() {
+export default function Shop( props ) {
+  
   return (
     <View style={styles.container}>
-      <Text>Shop</Text>
+      <Text> Shop </Text>
     </View>
   );
+
 }
 
 Shop.navigationOptions = {

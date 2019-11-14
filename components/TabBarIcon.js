@@ -1,14 +1,17 @@
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
-import Colors from '../constants/Colors';
+import * as Constants from '../constants';
 
 export default function TabBarIcon(props) {
+  
+  const Colors = Constants.Theme.Colors;
+
   return (
-    <Ionicons
+    <MaterialIcons
       name={props.name}
       size={26}
-      style={{ marginBottom: -3 }}
+      style={{ marginBottom: -5 }}
       color={props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
   );
