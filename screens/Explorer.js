@@ -5,7 +5,8 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Platform
+  Platform,
+  ActivityIndicator
 } from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import Modal from 'react-native-modal';
@@ -26,12 +27,6 @@ export default class  Explorer extends React.Component {
     this.state = {
       active: null,
       activeModal: null,
-      region: {
-        latitude: null,
-        longitude: null,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      }
     }
   }
 
@@ -47,9 +42,10 @@ export default class  Explorer extends React.Component {
       this.setState(prevState => ({ 
           ...prevState, 
           region: {
-            ...prevState.region,
             latitude: lat,
             longitude: long,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
           }
         })
       )
@@ -129,12 +125,12 @@ export default class  Explorer extends React.Component {
     );
   }
 
-  renderIcon = ( name ) => (
+  renderIcon = ( name , id ) => (
     <Icon 
       type="MaterialCommunityIcons"
       name={ name }
       size={40}
-      color={ this.state.active === shop.id ? Colors.white : Colors.tintColor }
+      color={ this.state.active === id ? Colors.white : Colors.tintColor }
     />
   );
 
@@ -142,11 +138,13 @@ export default class  Explorer extends React.Component {
 
     return (
       <View style={styles.container}>
-        < MapView
+        { this.state.region ? <MapView
           initialRegion={this.state.region} 
           style={styles.mapStyle} 
         >
-          { this.state.region ? <Marker coordinate={this.state.region} /> : null }
+
+          <Marker coordinate={this.state.region} />
+          
           {Shops.map(shop => { 
             return Platform.OS === 'ios' ? (
               <Marker
@@ -161,7 +159,7 @@ export default class  Explorer extends React.Component {
                     this.state.active === shop.id ? styles.active : null
                   ]}>
 
-                    { this.renderIcon(shop.icon) }
+                    { this.renderIcon( shop.icon , shop.id ) }
                   
                   </View>
                 
@@ -179,7 +177,7 @@ export default class  Explorer extends React.Component {
                   this.state.active === shop.id ? styles.active : null
                 ]}>
 
-                  { this.renderIcon( shop.icon ) }
+                  { this.renderIcon( shop.icon , shop.id ) }
                 
                 </View>
               </Marker>
@@ -187,6 +185,9 @@ export default class  Explorer extends React.Component {
           }
         )}   
         </ MapView>
+         :
+          <ActivityIndicator size="large" color={Colors.tintColor} />
+        }
 
         { this.renderModal() }
       

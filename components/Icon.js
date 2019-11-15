@@ -8,7 +8,7 @@ export default function Icon ( props ) {
   const Colors = Constants.Theme.Colors;
   
   switch( props.type ) {
-    case MaterialIcons:
+    case 'MaterialIcons':
       return (
         <MaterialIcons
           name={props.name}
@@ -17,7 +17,7 @@ export default function Icon ( props ) {
           color={props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
         />
       );
-    case MaterialCommunityIcons:
+    case 'MaterialCommunityIcons':
       return (
         <MaterialCommunityIcons
           name={props.name}
