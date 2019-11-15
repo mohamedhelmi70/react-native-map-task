@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import MapView, { Marker } from "react-native-maps";
 import Modal from 'react-native-modal';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Icon from '../components/Icon';
 
 import * as Constants from '../constants';
 
@@ -26,6 +26,12 @@ export default class  Explorer extends React.Component {
     this.state = {
       active: null,
       activeModal: null,
+      region: {
+        latitude: null,
+        longitude: null,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      }
     }
   }
 
@@ -35,24 +41,27 @@ export default class  Explorer extends React.Component {
 
   getCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition(( position ) => {
-      const lat = parseFloat( position.coords.latitude)
-      const long = parseFloat( position.coords.longitude )
+      const lat = parseFloat(position.coords.latitude)
+      const long = parseFloat(position.coords.longitude)
 
-      const initialRegion = {
-        latitude: lat,
-        longitude: long,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      }
-
-      this.setState(prev => ({ ...prev.state, region: initialRegion }))
+      this.setState(prevState => ({ 
+          ...prevState, 
+          region: {
+            ...prevState.region,
+            latitude: lat,
+            longitude: long,
+          }
+        })
+      )
     },
+
     (error) => alert(JSON.stringify(error)),
+    
     { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 });
-  };
+  };  
 
   onGoToShop = ( id ) => {
-    this.setState({ activeModal: null, active: null});
+    this.setState(prevState => ({ ...prevState, activeModal: null, active: null}));
     this.props.navigation.navigate('Shop', { shopId : id });
   };
 
@@ -68,8 +77,8 @@ export default class  Explorer extends React.Component {
         style={styles.modalContainer}
         backdropColor={Colors.overlay}
         backdropOpacity={.2}
-        onBackButtonPress={() => this.setState({ activeModal: null , active: null})}
-        onBackdropPress={() => this.setState({ activeModal: null, active: null })}
+        onBackButtonPress={() => this.setState(prevState => ({ ...prevState, activeModal: null, active: null}))}
+        onBackdropPress={() => this.setState(prevState => ({ ...prevState, activeModal: null, active: null}))}
       >
         <View style={styles.modal}>
           
@@ -120,6 +129,15 @@ export default class  Explorer extends React.Component {
     );
   }
 
+  renderIcon = ( name ) => (
+    <Icon 
+      type="MaterialCommunityIcons"
+      name={ name }
+      size={40}
+      color={ this.state.active === shop.id ? Colors.white : Colors.tintColor }
+    />
+  );
+
   render () {
 
     return (
@@ -135,43 +153,43 @@ export default class  Explorer extends React.Component {
                 key={`marker-${shop.id}`}
                 coordinate={shop.coordinate}
               >
-                <TouchableOpacity onPress={() => this.setState(prev => ({ ...prev.state, activeModal: shop, active : shop.id }))} >
+                <TouchableOpacity onPress={() => this.setState(prevState => ({ ...prevState, activeModal: shop, active : shop.id }))} >
+                  
                   <View style={[
                     styles.marker,
                     styles.shadow,
                     this.state.active === shop.id ? styles.active : null
                   ]}>
-                    <MaterialCommunityIcons
-                      name={shop.icon}
-                      size={40}
-                      color={ this.state.active === shop.id ? Colors.white : Colors.tintColor }
-                    />
+
+                    { this.renderIcon(shop.icon) }
+                  
                   </View>
+                
                 </TouchableOpacity>
               </Marker>
             ) : (
               <Marker
                 key={`marker-${shop.id}`}
                 coordinate={shop.coordinate}
-                onPress={() => this.setState(prev => ({ ...prev.state, activeModal: shop, active : shop.id }))}
+                onPress={() => this.setState(prevState => ({ ...prevState, activeModal: shop, active : shop.id }))}
               >
                 <View style={[
                   styles.marker,
                   styles.shadow,
                   this.state.active === shop.id ? styles.active : null
                 ]}>
-                  <MaterialCommunityIcons
-                    name={shop.icon}
-                    size={40}
-                    color={ this.state.active === shop.id ? Colors.white : Colors.tintColor }
-                  />
+
+                  { this.renderIcon( shop.icon ) }
+                
                 </View>
               </Marker>
             )
           }
         )}   
         </ MapView>
+
         { this.renderModal() }
+      
       </View>
     );
   }
@@ -281,7 +299,6 @@ const styles = StyleSheet.create({
   category: {
     flex: .34,
     borderColor: Colors.tintColor,
-    //borderWidth: 1,
     alignItems: "center",
     borderTopLeftRadius: Sizes.base,
     borderTopRightRadius: Sizes.base,

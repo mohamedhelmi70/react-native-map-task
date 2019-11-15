@@ -2,7 +2,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import TabBarIcon from '../components/TabBarIcon';
+import Icon from '../components/Icon';
 import Explore from '../screens/Explorer';
 import Account from '../screens/Account';
 import More from '../screens/More';
@@ -27,7 +27,7 @@ const ExploreStack = createStackNavigator(
 ExploreStack.navigationOptions = {
   tabBarLabel: 'Explor',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name="explore"/>
+    <Icon focused={focused} type="MaterialIcons" name="explore" />
   ),
 };
 
@@ -43,7 +43,7 @@ const ShopStack = createStackNavigator(
 ShopStack.navigationOptions = {
   tabBarLabel: 'Shop',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name="store" />
+    <Icon focused={focused} type="MaterialIcons" name="store" />
   ),
 };
 
@@ -59,7 +59,7 @@ const AccountStack = createStackNavigator(
 AccountStack.navigationOptions = {
   tabBarLabel: 'Account',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name="person" />
+    <Icon focused={focused} type="MaterialIcons" name="person" />
   ),
 };
 
@@ -75,7 +75,7 @@ const MoreStack = createStackNavigator(
 MoreStack.navigationOptions = {
   tabBarLabel: 'More',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name="more-horiz" />
+    <Icon focused={focused} type="MaterialIcons" name="more-horiz" />
   ),
 };
 
