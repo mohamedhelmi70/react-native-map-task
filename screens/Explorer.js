@@ -27,6 +27,7 @@ export default class  Explorer extends React.Component {
     this.state = {
       active: null,
       activeModal: null,
+      region: null,
     }
   }
 
