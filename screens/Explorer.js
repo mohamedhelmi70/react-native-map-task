@@ -8,13 +8,15 @@ import {
   Platform,
   ActivityIndicator
 } from 'react-native';
+import axios from 'axios';
 import MapView, { Marker } from "react-native-maps";
 import Modal from 'react-native-modal';
+
 import Icon from '../components/Icon';
 
 import * as Constants from '../constants';
 
-const Shops = Constants.Mocks.Shops;
+//const Shops = Constants.Mocks.Shops;
 const window = Constants.Layout.default.window;
 const { Colors, Sizes } = Constants.Theme;
 const ASPECT_RATIO = window.width / window.height;
@@ -25,14 +27,54 @@ export default class  Explorer extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
+      isLoading: false,
+      error: null,
       active: null,
       activeModal: null,
       region: null,
+      products: {
+        icon: "tshirt-v",
+        type: 'men’s wear',
+        categories: [
+          {name: 'Andora Shirt', image: require('../assets/images/ravin/3.jpg') },
+          {name: 'Yallow Shirt', image: require('../assets/images/ravin/2.jpg') },
+          {name: 'Black Shirt', image: require('../assets/images/ravin/1.jpg') },
+        ],
+      },
+      shops: [],
     }
   }
 
   componentDidMount = () => {
+
+    this.setState(prevState => ({...prevState, isLoading: true}));
+    
+    axios.get("https://backend.nasnav.com/navbox/shops?org_id=11")
+    .then(res => {
+
+      if ( res.status !== 200 ) {
+        throw new Error("Service not available now, try again.");
+      }
+
+      shops = res.data.map(shop => ({...shop, ...this.state.products }))
+      
+      this.setState(prevState => ({
+        ...prevState,
+        shops,
+      }));
+    
+    })
+    .catch(err => {
+      this.setState(prevState => ({
+        ...prevState,
+        error: err,
+        isLoading: false,
+      }));
+    })
+
     this.getCurrentLocation();
+    
+    this.setState(prevState => ({...prevState, isLoading: false}));
   }
 
   getCurrentLocation = () => {
@@ -83,15 +125,17 @@ export default class  Explorer extends React.Component {
           
             <View style={{ flex: 2 }}>
               <Text style={[styles.logo]}> 
-                { activeModal.Logo } 
+                Logo
               </Text>
-              <Text style={{paddingBottom: -2,}} > { `${activeModal.name}'s ${activeModal.state}` } </Text>
+              <Text style={{paddingBottom: -2,}} > 
+                { `${activeModal.name}'s ${activeModal.address.city ? activeModal.address.city : activeModal.address.country }` } 
+              </Text>
               <Text style={[styles.semiText, { fontSize: 11 } ]} > { activeModal.type } </Text>
             </View>
 
             <View styles={{ flex: 1 }}>
               <View style={styles.bageLogo} >
-                <Text style={{color: Colors.white}}>360</Text>
+                <Text style={{color: Colors.white}}> Logo 360 </Text>
               </View>
             
               <TouchableOpacity style={styles.goToShopBtn} 
@@ -130,23 +174,22 @@ export default class  Explorer extends React.Component {
     <Icon 
       type="MaterialCommunityIcons"
       name={ name }
-      size={40}
+      size={32}
       color={ this.state.active === id ? Colors.white : Colors.tintColor }
     />
   );
 
   render () {
+    
+    let map = null;
 
-    return (
-      <View style={styles.container}>
-        { this.state.region ? <MapView
-          initialRegion={this.state.region} 
-          style={styles.mapStyle} 
-        >
+    if ( !this.state.isLoading && this.state.region ) {
+      map = (
+        <MapView initialRegion={this.state.region}  style={styles.mapStyle}  >
 
           <Marker coordinate={this.state.region} />
           
-          {Shops.map(shop => { 
+          {this.state.shops.map(shop => { 
             return Platform.OS === 'ios' ? (
               <Marker
                 key={`marker-${shop.id}`}
@@ -169,7 +212,7 @@ export default class  Explorer extends React.Component {
             ) : (
               <Marker
                 key={`marker-${shop.id}`}
-                coordinate={shop.coordinate}
+                coordinate={{latitude: parseFloat(shop.address.lat), longitude: parseFloat(shop.address.lng)}}
                 onPress={() => this.setState(prevState => ({ ...prevState, activeModal: shop, active : shop.id }))}
               >
                 <View style={[
@@ -186,9 +229,15 @@ export default class  Explorer extends React.Component {
           }
         )}   
         </ MapView>
-         :
-          <ActivityIndicator size="large" color={Colors.tintColor} />
-        }
+      )
+    } else {
+      map = ( <ActivityIndicator size="small" color={Colors.tintColor} /> ); 
+    }
+
+    return (
+      <View style={styles.container}>
+        
+        { map }
 
         { this.renderModal() }
       
@@ -224,8 +273,8 @@ const styles = StyleSheet.create({
     height: window.height,
   },
   marker: {
-    height: 60,
-    width: 70,
+    height: 50,
+    width: 50,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: Colors.white,
